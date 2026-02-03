@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
 
+const dbRoutes = require('./routes/dbRoutes');
+
+app.use('/', dbRoutes);
+
 app.get('/', (req, res) => {
   res.send('API OK');
 });
