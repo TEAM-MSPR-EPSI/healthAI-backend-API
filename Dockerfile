@@ -1,20 +1,15 @@
-FROM python:3.11-slim
+FROM node:22-alpine
 
 WORKDIR /app
 
-# Installation des dépendances système
-RUN apt-get update && apt-get install -y \
-    gcc \
-    postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+COPY package*.json ./
 
-# Copie des dépendances
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Installer toutes les dépendances, y compris devDependencies
+RUN npm install
 
-# Copie du code
 COPY . .
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+# Utiliser nodemon en dev, npm start sinon
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = 'development' ]; then npx nodemon app.js; else npm start; fi"]
