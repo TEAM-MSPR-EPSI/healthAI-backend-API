@@ -1,10 +1,22 @@
 const express = require('express');
-const app = express();
+const sequelize = require('./config/database');
 
+const userRoutes = require('./routes/user.routes');
+const companyRoutes = require('./routes/company.routes');
 const dbRoutes = require('./routes/db.route');
 
-app.use('/', dbRoutes);
+const app = express();
+app.use(express.json());
 
+app.use('/', dbRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/companies', companyRoutes);
+
+
+sequelize.sync()
+  .then(() => console.log("Database synced"))
+  .catch(err => console.error(err));
+  
 app.get('/', (req, res) => {
   res.send('API OK');
 });
