@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const ProgramSportSession = sequelize.define("ProgramSportSession", {
-  sport_program_session_id: {
+  program_sport_session_id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -27,6 +27,10 @@ const ProgramSportSession = sequelize.define("ProgramSportSession", {
     onUpdate: "CASCADE",
     onDelete: "CASCADE",
   },
+  program_sport_session_rank: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  }
 },
 {
   tableName: "program_sport_session",

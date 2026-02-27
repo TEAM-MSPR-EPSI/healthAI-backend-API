@@ -7,14 +7,9 @@ const SportSession = sequelize.define("SportSession", {
         autoIncrement: true,
         primaryKey: true,
     },
-    sport_session_rank: {
-      type: DataTypes.INTEGER,
+    sport_session_name: {
+      type: DataTypes.VARCHAR(255),
       allowNull: false,
-    },
-
-    sport_session_duration: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
     },
 },
 {
