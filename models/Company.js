@@ -17,24 +17,14 @@ const Company = sequelize.define("Company", {
     allowNull: false,
     unique: true,
   },
-  company_partnership_date: {
-    type: DataTypes.DATEONLY,
+  company_inscription: {
+    type: DataTypes.DATE,
     allowNull: false,
   },
-  company_type: {
-    type: DataTypes.ENUM(
-      "SME",
-      "mid-size",
-      "large enterprise",
-      "startup",
-      "association",
-      "public sector"
-    ),
-    allowNull: false,
-  },
-}, {
-  tableName: "company",
-  timestamps: false,
+},
+{
+    tableName: "company",
+    timestamps: false,
 });
 
 module.exports = Company;

@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Company = require("./Company");
 
 const User = sequelize.define("User", {
   user_id: {
@@ -8,17 +7,8 @@ const User = sequelize.define("User", {
     autoIncrement: true,
     primaryKey: true,
   },
-  user_role: {
-    type: DataTypes.ENUM("admin", "user"),
-    allowNull: false,
-    defaultValue: "user",
-  },
-  user_password: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  user_email: {
-    type: DataTypes.STRING(100),
+  user_username: {
+    type: DataTypes.STRING(50),
     allowNull: false,
     unique: true,
   },
@@ -30,51 +20,85 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING(50),
     allowNull: false,
   },
-  user_birthdate: {
+  user_birth : {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  user_country: {
-    type: DataTypes.STRING(50),
+  user_role: {
+    type: DataTypes.ENUM('admin', 'user', 'company_admin'),
+    allowNull: false,
+    defaultValue: "user",
+  },
+  user_gender: {
+    type: DataTypes.ENUM('male', 'female', 'other', 'prefer_not_to_say'),
     allowNull: false,
   },
   user_city: {
     type: DataTypes.STRING(50),
-    allowNull: false,
+    allowNull: true,
   },
-  user_gender: {
-    type: DataTypes.ENUM("Male", "Female", "Other"),
-    allowNull: false,
+  user_country: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
   },
   user_phone: {
     type: DataTypes.STRING(50),
-    unique: true,
-  },
-  user_height: {
-    type: DataTypes.DECIMAL(5, 2),
     allowNull: false,
-    validate: {
-      min: 0.01,
-    },
+  },
+  user_size: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
   },
   user_weight: {
-    type: DataTypes.DECIMAL(5, 2),
-    validate: {
-      min: 0.01,
-    },
+    type: DataTypes.DECIMAL(4, 1),
+    allowNull: false,
   },
-}, {
+  user_hashpwd: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+  },
+  user_inscription: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  sport_program_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "sport_program",
+        key: "sport_program_id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+    },
+    company_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "company",
+        key: "company_id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+    },
+},
+{
   tableName: "user",
   timestamps: false,
 });
 
-// Relation
-User.belongsTo(Company, {
-  foreignKey: "company_id",
-});
+User.associate = (models) => {
+  User.belongsTo(models.SportProgram, {
+    foreignKey: "sport_program_id",
+    as: "sport_program",
+  });
 
-Company.hasMany(User, {
-  foreignKey: "company_id",
-});
+  User.belongsTo(models.Company, {
+    foreignKey: "company_id",
+    as: "company",
+  });
+};
+
 
 module.exports = User;
