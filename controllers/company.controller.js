@@ -1,5 +1,5 @@
 const CompanyService = require("../services/company.service");
-
+const SubscriptionService = require("../services/subscription.service");
 class CompanyController {
 
     static async create(req, res) {
@@ -33,6 +33,17 @@ class CompanyController {
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: "Error fetching company" });
+        }
+    }
+
+    // Get Subscription
+    static async getSubscriptions(req, res) {
+        try {
+            const subs = await SubscriptionService.getSubscriptionsByCompany(req.params.id);
+            res.status(200).json(subs);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Error fetching subscriptions by company" });
         }
     }
 
