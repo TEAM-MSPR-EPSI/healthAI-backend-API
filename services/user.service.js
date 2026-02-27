@@ -1,5 +1,4 @@
 const User = require("../models/User");
-const Company = require("../models/Company");
 
 class UserService {
     static async createUser(data) {
@@ -61,4 +60,3 @@ class UserService {
     }
 }
 
-module.exports = UserService;

@@ -4,6 +4,7 @@ const sequelize = require('./config/database');
 const userRoutes = require('./routes/user.routes');
 const companyRoutes = require('./routes/company.routes');
 const dbRoutes = require('./routes/db.route');
+const subscriptionRoutes = require('./routes/subscription.route');
 
 const app = express();
 app.use(express.json());
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use('/', dbRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/companies', companyRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 
 sequelize.sync()
