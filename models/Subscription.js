@@ -17,7 +17,7 @@ const Subscription = sequelize.define("Subscription", {
     },
 
     subscription_name: {
-        type: DataTypes.ENUM("BASIC", "PREMIUM", "ENTERPRISE"), // adapte selon ton enum SQL
+        type: DataTypes.ENUM('Freemium', 'Premium', 'Premium+', 'B2B'), // adapte selon ton enum SQL
         allowNull: false,
     },
 
