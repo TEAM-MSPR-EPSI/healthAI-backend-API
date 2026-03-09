@@ -8,7 +8,7 @@ const SportSession = sequelize.define("SportSession", {
         primaryKey: true,
     },
     sport_session_name: {
-      type: DataTypes.VARCHAR(255),
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
 },
