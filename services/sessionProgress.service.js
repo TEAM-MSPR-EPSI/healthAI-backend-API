@@ -16,24 +16,42 @@ class SessionProgressService {
     static async getSessionProgresses() {
         try {
             const sessionProgresses = await SessionProgress.findAll({
-                include: [SportSession, User]
+                include: [
+                    {
+                        model: SportSession,
+                        as: "sport_session"
+                    },
+                    {
+                        model: User,
+                        as: "user"
+                    }
+                ]
             });
             return sessionProgresses;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching session progresses");
+            console.error("Error fetching session progresses:", error);
+            throw error;
         }
     }
 
     static async getSessionProgressById(id) {
         try {
             const sessionProgress = await SessionProgress.findByPk(id, {
-                include: [SportSession, User]
+                include: [
+                    {
+                        model: SportSession,
+                        as: "sport_session"
+                    },
+                    {
+                        model: User,
+                        as: "user"
+                    }
+                ]
             });
             return sessionProgress;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching session progress");
+            console.error("Error fetching session progress:", error);
+            throw error;
         }
     }
 
@@ -41,13 +59,22 @@ class SessionProgressService {
         try {
             const sessionProgresses = await SessionProgress.findAll({
                 where: { user_id: userId },
-                include: [SportSession, User],
+                include: [
+                    {
+                        model: SportSession,
+                        as: "sport_session"
+                    },
+                    {
+                        model: User,
+                        as: "user"
+                    }
+                ],
                 order: [['session_progress_start', 'DESC']]
             });
             return sessionProgresses;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching session progresses");
+            console.error("Error fetching session progresses:", error);
+            throw error;
         }
     }
 

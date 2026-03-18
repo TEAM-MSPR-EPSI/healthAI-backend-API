@@ -15,24 +15,30 @@ class UserBiometricService {
     static async getUserBiometrics() {
         try {
             const userBiometrics = await UserBiometric.findAll({
-                include: [User]
+                include: [{
+                    model: User,
+                    as: "user"
+                }]
             });
             return userBiometrics;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching user biometrics");
+            console.error("Error fetching user biometrics:", error);
+            throw error;
         }
     }
 
     static async getUserBiometricById(id) {
         try {
             const userBiometric = await UserBiometric.findByPk(id, {
-                include: [User]
+                include: [{
+                    model: User,
+                    as: "user"
+                }]
             });
             return userBiometric;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching user biometric");
+            console.error("Error fetching user biometric:", error);
+            throw error;
         }
     }
 
@@ -40,13 +46,16 @@ class UserBiometricService {
         try {
             const userBiometrics = await UserBiometric.findAll({
                 where: { user_id: userId },
-                include: [User],
+                include: [{
+                    model: User,
+                    as: "user"
+                }],
                 order: [['biometric_date', 'DESC']]
             });
             return userBiometrics;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching user biometrics");
+            console.error("Error fetching user biometrics:", error);
+            throw error;
         }
     }
 

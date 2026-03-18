@@ -15,24 +15,30 @@ class UserHealthProfileService {
     static async getUserHealthProfiles() {
         try {
             const userHealthProfiles = await UserHealthProfile.findAll({
-                include: [User]
+                include: [{
+                    model: User,
+                    as: "user"
+                }]
             });
             return userHealthProfiles;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching user health profiles");
+            console.error("Error fetching user health profiles:", error);
+            throw error;
         }
     }
 
     static async getUserHealthProfileById(id) {
         try {
             const userHealthProfile = await UserHealthProfile.findByPk(id, {
-                include: [User]
+                include: [{
+                    model: User,
+                    as: "user"
+                }]
             });
             return userHealthProfile;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching user health profile");
+            console.error("Error fetching user health profile:", error);
+            throw error;
         }
     }
 
@@ -40,12 +46,15 @@ class UserHealthProfileService {
         try {
             const userHealthProfile = await UserHealthProfile.findOne({
                 where: { user_id: userId },
-                include: [User]
+                include: [{
+                    model: User,
+                    as: "user"
+                }]
             });
             return userHealthProfile;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching user health profile");
+            console.error("Error fetching user health profile:", error);
+            throw error;
         }
     }
 

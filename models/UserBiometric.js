@@ -19,13 +19,9 @@ const UserBiometric = sequelize.define("UserBiometric", {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    biometric_heart_rate: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
     biometric_weight: {
       type: DataTypes.DECIMAL(4, 1),
-      allowNull: false,
+      allowNull: true,
     },
     user_id: {
       type: DataTypes.INTEGER,

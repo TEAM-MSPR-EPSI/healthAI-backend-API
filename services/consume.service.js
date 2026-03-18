@@ -8,8 +8,8 @@ class ConsumeService {
             const consume = await Consume.create(data);
             return consume;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error creating consume");
+            console.error("Error creating consume:", error);
+            throw error;
         }
     }
 
