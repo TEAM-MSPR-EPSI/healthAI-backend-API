@@ -35,4 +35,11 @@ const Recipe = sequelize.define("Recipe", {
     timestamps: false,
 });
 
+Recipe.associate = (models) => {
+    Recipe.hasMany(models.RecipeIngredient, {
+        foreignKey: "recipe_id",
+        as: "RecipeIngredients",
+    });
+};
+
 module.exports = Recipe;

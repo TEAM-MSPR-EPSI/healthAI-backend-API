@@ -45,8 +45,8 @@ class SubscriptionController {
 
             res.status(200).json(updated);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "Error updating subscription" });
+            console.error("Controller error updating subscription:", error);
+            res.status(500).json({ error: error.message });
         }
     }
 
@@ -57,8 +57,8 @@ class SubscriptionController {
 
             res.status(200).json(deleted);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "Error deleting subscription" });
+            console.error("Controller error deleting subscription:", error);
+            res.status(500).json({ error: error.message });
         }
     }
 

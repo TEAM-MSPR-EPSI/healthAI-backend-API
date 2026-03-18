@@ -89,8 +89,8 @@ class SubscriptionService {
             await sub.destroy();
             return sub;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error deleting subscription");
+            console.error("Error deleting subscription:", error);
+            throw error;
         }
     }
 }

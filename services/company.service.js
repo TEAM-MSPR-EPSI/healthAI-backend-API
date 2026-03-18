@@ -7,8 +7,8 @@ class CompanyService {
             const company = await Company.create(data);
             return company;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error creating company");
+            console.error("Error creating company:", error);
+            throw error;
         }
     }
 

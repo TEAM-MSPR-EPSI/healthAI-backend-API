@@ -15,24 +15,30 @@ class IngredientService {
     static async getIngredients() {
         try {
             const ingredients = await Ingredient.findAll({
-                include: [IngredientAllergy]
+                include: [{
+                    model: IngredientAllergy,
+                    as: "allergies"
+                }]
             });
             return ingredients;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching ingredients");
+            console.error("Error fetching ingredients:", error);
+            throw error;
         }
     }
 
     static async getIngredientById(id) {
         try {
             const ingredient = await Ingredient.findByPk(id, {
-                include: [IngredientAllergy]
+                include: [{
+                    model: IngredientAllergy,
+                    as: "allergies"
+                }]
             });
             return ingredient;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching ingredient");
+            console.error("Error fetching ingredient:", error);
+            throw error;
         }
     }
 

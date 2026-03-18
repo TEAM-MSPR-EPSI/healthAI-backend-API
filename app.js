@@ -2,6 +2,7 @@ const express = require('express');
 const sequelize = require('./config/database');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
+const models = require('./models/index');
 
 const userRoutes = require('./routes/user.routes');
 const companyRoutes = require('./routes/company.routes');
