@@ -45,4 +45,11 @@ const SportExercise = sequelize.define("SportExercise", {
     timestamps: false,
 });
 
+SportExercise.associate = (models) => {
+    SportExercise.hasMany(models.SportExerciseEquipment, {
+        foreignKey: "sport_exercise_id",
+        as: "exerciseEquipments",
+    });
+};
+
 module.exports = SportExercise;

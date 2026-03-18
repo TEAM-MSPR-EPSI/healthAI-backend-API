@@ -25,12 +25,14 @@ const SportExerciseEquipment = sequelize.define("SportExerciseEquipment", {
   SportExerciseEquipment.associate = (models) => {
     SportExerciseEquipment.belongsTo(models.SportExercise, {
       foreignKey: "sport_exercise_id",
+      as: "sportExercise",
       onDelete: "CASCADE",
       onUpdate: "CASCADE"
     });
 
     SportExerciseEquipment.belongsTo(models.SportEquipment, {
       foreignKey: "sport_equipment_id",
+      as: "sportEquipment",
       onDelete: "CASCADE",
       onUpdate: "CASCADE"
     });

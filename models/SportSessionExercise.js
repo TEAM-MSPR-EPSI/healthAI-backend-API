@@ -29,12 +29,14 @@ const SportSessionExercise = sequelize.define("SportSessionExercise", {
   SportSessionExercise.associate = (models) => {
     SportSessionExercise.belongsTo(models.SportSession, {
       foreignKey: "sport_session_id",
+      as: "sportSession",
       onDelete: "CASCADE",
       onUpdate: "CASCADE"
     });
 
     SportSessionExercise.belongsTo(models.SportExercise, {
       foreignKey: "sport_exercise_id",
+      as: "sportExercise",
       onDelete: "CASCADE",
       onUpdate: "CASCADE"
     });
