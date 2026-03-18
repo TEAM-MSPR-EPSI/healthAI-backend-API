@@ -6,8 +6,8 @@ class UserService {
             const user = await User.create(data);
             return user;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error creating user");
+            console.error("Error creating user:", error);
+            throw error;
         }
     }
 
@@ -60,3 +60,4 @@ class UserService {
     }
 }
 
+module.exports = UserService;

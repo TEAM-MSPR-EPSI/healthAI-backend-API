@@ -18,13 +18,17 @@ class RecipeService {
             const recipes = await Recipe.findAll({
                 include: [{
                     model: RecipeIngredient,
-                    include: [Ingredient]
+                    as: "RecipeIngredients",
+                    include: [{
+                        model: Ingredient,
+                        as: "ingredient"
+                    }]
                 }]
             });
             return recipes;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching recipes");
+            console.error("Error fetching recipes:", error);
+            throw error;
         }
     }
 
@@ -33,13 +37,17 @@ class RecipeService {
             const recipe = await Recipe.findByPk(id, {
                 include: [{
                     model: RecipeIngredient,
-                    include: [Ingredient]
+                    as: "RecipeIngredients",
+                    include: [{
+                        model: Ingredient,
+                        as: "ingredient"
+                    }]
                 }]
             });
             return recipe;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching recipe");
+            console.error("Error fetching recipe:", error);
+            throw error;
         }
     }
 

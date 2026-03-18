@@ -54,4 +54,11 @@ const Ingredient = sequelize.define("Ingredient", {
     timestamps: false,
 });
 
+Ingredient.associate = (models) => {
+    Ingredient.hasMany(models.IngredientAllergy, {
+        foreignKey: "ingredient_id",
+        as: "allergies",
+    });
+};
+
 module.exports = Ingredient;

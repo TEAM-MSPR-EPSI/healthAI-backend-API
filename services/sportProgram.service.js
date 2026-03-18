@@ -18,13 +18,17 @@ class SportProgramService {
             const sportPrograms = await SportProgram.findAll({
                 include: [{
                     model: ProgramSportSession,
-                    include: [SportSession]
+                    as: "programSessions",
+                    include: [{
+                        model: SportSession,
+                        as: "sport_session"
+                    }]
                 }]
             });
             return sportPrograms;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching sport programs");
+            console.error("Error fetching sport programs:", error);
+            throw error;
         }
     }
 
@@ -33,13 +37,17 @@ class SportProgramService {
             const sportProgram = await SportProgram.findByPk(id, {
                 include: [{
                     model: ProgramSportSession,
-                    include: [SportSession]
+                    as: "programSessions",
+                    include: [{
+                        model: SportSession,
+                        as: "sport_session"
+                    }]
                 }]
             });
             return sportProgram;
         } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching sport program");
+            console.error("Error fetching sport program:", error);
+            throw error;
         }
     }
 

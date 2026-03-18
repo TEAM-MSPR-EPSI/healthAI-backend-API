@@ -53,6 +53,15 @@ const User = sequelize.define("User", {
     type: DataTypes.DECIMAL(4, 1),
     allowNull: false,
   },
+  user_last_weight: {
+    type: DataTypes.DECIMAL(4, 1),
+    allowNull: true,
+  },
+  user_email: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    unique: true,
+  },
   user_hashpwd: {
     type: DataTypes.STRING(255),
     allowNull: false,

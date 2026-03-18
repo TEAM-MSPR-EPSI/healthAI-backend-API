@@ -18,8 +18,9 @@ const Company = sequelize.define("Company", {
     unique: true,
   },
   company_inscription: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
+    defaultValue: DataTypes.NOW,
   },
 },
 {
