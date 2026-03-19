@@ -19,6 +19,7 @@ const userHealthProfileRoutes = require('./routes/userHealthProfile.routes');
 const userBiometricRoutes = require('./routes/userBiometric.routes');
 const sessionProgressRoutes = require('./routes/sessionProgress.routes');
 const consumeRoutes = require('./routes/consume.routes');
+const programSessionRoutes = require('./routes/programSession.routes');
 
 const app = express();
 app.use(express.json());
@@ -40,6 +41,7 @@ app.use('/api/user-health-profiles', userHealthProfileRoutes);
 app.use('/api/user-biometrics', userBiometricRoutes);
 app.use('/api/session-progress', sessionProgressRoutes);
 app.use('/api/consumes', consumeRoutes);
+app.use('/api/program-sessions', programSessionRoutes);
 
 sequelize.sync()
   .then(() => console.log("Database synced"))
