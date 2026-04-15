@@ -21,6 +21,7 @@ const userAllergyRoutes = require('./routes/userAllergy.routes');
 const sessionProgressRoutes = require('./routes/sessionProgress.routes');
 const consumeRoutes = require('./routes/consume.routes');
 const programSessionRoutes = require('./routes/programSession.routes');
+const sessionExerciseRoutes = require('./routes/sessionExercise.routes');
 const recipeIngredientRoutes = require('./routes/recipeIngredient.routes');
 const exerciseEquipmentRoutes = require('./routes/exerciseEquipment.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
@@ -47,7 +48,9 @@ app.use('/api/user-allergies', userAllergyRoutes);
 app.use('/api/session-progress', sessionProgressRoutes);
 app.use('/api/consumes', consumeRoutes);
 app.use('/api/program-sessions', programSessionRoutes);
+app.use('/api/session-exercises', sessionExerciseRoutes);
 app.use('/api/recipe-ingredients', recipeIngredientRoutes);
+app.use('/api/exercise-equipment', exerciseEquipmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 sequelize.sync()
