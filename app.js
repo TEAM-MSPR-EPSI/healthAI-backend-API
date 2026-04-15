@@ -22,6 +22,7 @@ const sessionProgressRoutes = require('./routes/sessionProgress.routes');
 const consumeRoutes = require('./routes/consume.routes');
 const programSessionRoutes = require('./routes/programSession.routes');
 const recipeIngredientRoutes = require('./routes/recipeIngredient.routes');
+const exerciseEquipmentRoutes = require('./routes/exerciseEquipment.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 
 const app = express();
