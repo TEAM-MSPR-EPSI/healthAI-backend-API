@@ -25,6 +25,7 @@ const sessionExerciseRoutes = require('./routes/sessionExercise.routes');
 const recipeIngredientRoutes = require('./routes/recipeIngredient.routes');
 const exerciseEquipmentRoutes = require('./routes/exerciseEquipment.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
+const importRoutes = require('./routes/import.routes');
 
 const app = express();
 app.use(express.json());
@@ -52,6 +53,7 @@ app.use('/api/session-exercises', sessionExerciseRoutes);
 app.use('/api/recipe-ingredients', recipeIngredientRoutes);
 app.use('/api/exercise-equipment', exerciseEquipmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/import', importRoutes);
 
 sequelize.sync()
   .then(() => console.log("Database synced"))
