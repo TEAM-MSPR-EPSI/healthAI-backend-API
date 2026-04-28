@@ -1,4 +1,4 @@
-const { User, Consume, SessionProgress, UserBiometric, Ingredient } = require("../models");
+const { User, Consume, SessionProgress, UserBiometric, Ingredient, UserSubscription, Subscription } = require("../models");
 const { Op } = require("sequelize");
 
 class AnalyticsController {
@@ -196,30 +196,152 @@ class AnalyticsController {
 
   /**
    * GET /api/analytics/admin/kpi/subscription-breakdown
-   * Retourne la répartition réelle des abonnements par type
+   * Retourne la répartition réelle des abonnements actifs par type, en séparant Premium+
    */
   static async getSubscriptionBreakdown(req, res) {
     try {
-      const users = await User.findAll({
-        attributes: ['user_role'],
-        raw: true
+      const activeSubscriptions = await UserSubscription.findAll({
+        where: {
+          user_subscription_is_active: true,
+        },
+        include: [{
+          model: Subscription,
+          as: 'subscription',
+          attributes: ['subscription_name'],
+        }],
+        order: [['user_id', 'ASC'], ['user_subscription_start', 'DESC']],
       });
 
       const breakdown = {
         freemium: 0,
         premium: 0,
-        company_admin: 0,
-        admin: 0
+        premium_plus: 0,
+        b2b: 0,
       };
 
-      users.forEach(user => {
-        const role = user.user_role || 'freemium';
-        if (breakdown.hasOwnProperty(role)) {
-          breakdown[role]++;
+      const seenUsers = new Set();
+
+      activeSubscriptions.forEach((subscriptionLink) => {
+        if (seenUsers.has(subscriptionLink.user_id)) {
+          return;
+        }
+
+        seenUsers.add(subscriptionLink.user_id);
+
+        const subscriptionName = subscriptionLink.subscription?.subscription_name || 'Freemium';
+        if (subscriptionName === 'B2B') {
+          breakdown.b2b += 1;
+        } else if (subscriptionName === 'Premium+') {
+          breakdown.premium_plus += 1;
+        } else if (subscriptionName === 'Premium') {
+          breakdown.premium += 1;
+        } else {
+          breakdown.freemium += 1;
         }
       });
 
-      res.json(breakdown);
+      res.json({
+        labels: ['Freemium', 'Premium', 'Premium+', 'B2B'],
+        data: [breakdown.freemium, breakdown.premium, breakdown.premium_plus, breakdown.b2b],
+        rawData: breakdown,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  /**
+   * GET /api/analytics/admin/users/monthly-retention
+   * Retourne une rétention mensuelle calculée à partir de la dernière activité disponible
+   */
+  static async getMonthlyRetention(req, res) {
+    try {
+      const [latestConsumeDate, latestProgressDate] = await Promise.all([
+        Consume.max('consume_date'),
+        SessionProgress.max('session_progress_start'),
+      ]);
+
+      const candidates = [latestConsumeDate, latestProgressDate]
+        .filter(Boolean)
+        .map((date) => new Date(`${String(date).slice(0, 10)}T00:00:00`));
+
+      const anchorDate = candidates.length > 0
+        ? new Date(Math.max(...candidates.map((date) => date.getTime())))
+        : new Date();
+
+      const monthNames = ['Jan.', 'Fev.', 'Mar.', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Aout', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
+      const months = [];
+
+      for (let i = 4; i >= 0; i--) {
+        const date = new Date(anchorDate.getFullYear(), anchorDate.getMonth() - i, 1);
+        const year = date.getFullYear();
+        const monthIndex = date.getMonth();
+        const monthStart = new Date(year, monthIndex, 1).toISOString().split('T')[0];
+        const monthEnd = new Date(year, monthIndex + 1, 0).toISOString().split('T')[0];
+
+        months.push({
+          year,
+          monthIndex,
+          start: monthStart,
+          end: monthEnd,
+          label: monthNames[monthIndex],
+        });
+      }
+
+      const activeUsersByMonth = [];
+
+      for (const month of months) {
+        const [consumes, sessionProgresses] = await Promise.all([
+          Consume.findAll({
+            attributes: ['user_id'],
+            where: {
+              consume_date: { [Op.between]: [month.start, month.end] },
+            },
+            raw: true,
+          }),
+          SessionProgress.findAll({
+            attributes: ['user_id'],
+            where: {
+              session_progress_start: { [Op.between]: [month.start, month.end] },
+            },
+            raw: true,
+          }),
+        ]);
+
+        const userIds = new Set();
+        consumes.forEach((consume) => userIds.add(consume.user_id));
+        sessionProgresses.forEach((progress) => userIds.add(progress.user_id));
+        activeUsersByMonth.push(userIds);
+      }
+
+      const labels = months.slice(1).map((month) => month.label);
+      const data = months.slice(1).map((month, index) => {
+        const previousUsers = activeUsersByMonth[index];
+        const currentUsers = activeUsersByMonth[index + 1];
+
+        if (!previousUsers.size) {
+          return 0;
+        }
+
+        let retained = 0;
+        currentUsers.forEach((userId) => {
+          if (previousUsers.has(userId)) {
+            retained += 1;
+          }
+        });
+
+        return Math.round((retained / previousUsers.size) * 100);
+      });
+
+      res.json({
+        labels,
+        data,
+        rawData: months.map((month, index) => ({
+          label: month.label,
+          activeUsers: activeUsersByMonth[index].size,
+        })),
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: error.message });
