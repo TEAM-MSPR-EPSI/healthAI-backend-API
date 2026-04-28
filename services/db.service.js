@@ -1,4 +1,4 @@
-const pool = require('../pool');
+const pool = require('../config/pool');
 
 async function getCurrentTime() {
   const result = await pool.query('SELECT NOW()');

@@ -1,6 +1,7 @@
 # Ignorer le dossier node_modules
 node_modules/
 .env
+mspr-backend-api/
 
 # Ignorer les fichiers logs
 npm-debug.log*
