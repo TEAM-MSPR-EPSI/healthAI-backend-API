@@ -9,7 +9,12 @@ class AuthController {
         try {
             const user = AuthService.login({ email, password });
             const token = await user;
-            res.status(200).json({ token });
+            res.cookie('auth_jwt', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 60 * 60 * 1000 // 1 hour
+            });
+            res.status(200).json({ message : "Utilisateur identifié" });
         } catch (error) {
             res.status(401).json({ error: error.message });
         }
