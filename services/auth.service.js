@@ -4,6 +4,11 @@ const User = require("../models/User");
 
 class AuthService {
   static async register(data) {
+    const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    
+    if (!regex.test(data.password)) {
+      throw new Error("Le mot de passe doit contenir au moins 8 caractères, une majuscule et un caractère spécial.");
+    } 
     const hashed = await bcrypt.hash(data.password, 10);
     return await User.create({
       ...data,
