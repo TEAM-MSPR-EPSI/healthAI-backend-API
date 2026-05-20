@@ -1,5 +1,8 @@
+require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const sequelize = require('./config/database');
+const connectMongo = require('./config/mongo');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const models = require('./models/index');
@@ -28,10 +31,12 @@ const recipeIngredientRoutes = require('./routes/recipeIngredient.routes');
 const exerciseEquipmentRoutes = require('./routes/exerciseEquipment.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const importRoutes = require('./routes/import.routes');
+const socialPostRoutes = require('./routes/socialPost.routes');
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -58,10 +63,13 @@ app.use('/api/recipe-ingredients', recipeIngredientRoutes);
 app.use('/api/exercise-equipment', exerciseEquipmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/import', importRoutes);
+app.use('/api/social-posts', socialPostRoutes);
 
 sequelize.sync()
   .then(() => console.log("Database synced"))
   .catch(err => console.error(err));
+
+connectMongo();
 
 app.get('/', (req, res) => {
   res.send('API OK');
