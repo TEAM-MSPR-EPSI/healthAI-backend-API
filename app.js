@@ -65,16 +65,21 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/import', importRoutes);
 app.use('/api/social-posts', socialPostRoutes);
 
-sequelize.sync()
-  .then(() => console.log("Database synced"))
-  .catch(err => console.error(err));
-
-connectMongo();
-
 app.get('/', (req, res) => {
   res.send('API OK');
 });
 
-app.listen(5000, '0.0.0.0', () => {
-  console.log('API backend running on port 5000');
-});
+const bootstrap = async () => {
+  try {
+    await sequelize.sync();
+    console.log('Database synced');
+    await connectMongo();
+    app.listen(5000, '0.0.0.0', () => {
+      console.log('API backend running on port 5000');
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+bootstrap();

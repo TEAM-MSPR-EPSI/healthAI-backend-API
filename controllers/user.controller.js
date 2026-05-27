@@ -1,4 +1,5 @@
 const UserService = require("../services/user.service");
+const UserProfileService = require("../services/userProfile.service");
 
 class UserController {
     static sanitizeUser(user) {
@@ -8,10 +9,21 @@ class UserController {
         return data;
     }
 
+    static async withAvatar(user) {
+        const data = UserController.sanitizeUser(user);
+        if (!data) return data;
+        const avatar = await UserProfileService.getAvatar(data.user_id);
+        return {
+            ...data,
+            user_avatar_url: avatar?.avatarUrl || null,
+            user_avatar_emoji: avatar?.avatarEmoji || null,
+        };
+    }
+
     static async create(req, res) {
         try {
             const user = await UserService.createUser(req.body);
-            res.status(201).json(user);
+            res.status(201).json(await UserController.withAvatar(user));
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -19,7 +31,8 @@ class UserController {
     static async getAll(req, res) {
         try {
             const users = await UserService.getUsers();
-            res.json(users);
+            const payload = await Promise.all(users.map((user) => UserController.withAvatar(user)));
+            res.json(payload);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -27,7 +40,7 @@ class UserController {
     static async getById(req, res) {
         try {
             const user = await UserService.getUserById(req.params.id);
-            res.json(UserController.sanitizeUser(user));
+            res.json(await UserController.withAvatar(user));
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -39,7 +52,7 @@ class UserController {
             if (!user) {
                 return res.status(404).json({ error: "User not found" });
             }
-            res.json(UserController.sanitizeUser(user));
+            res.json(await UserController.withAvatar(user));
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -48,7 +61,7 @@ class UserController {
     static async update(req, res) {
         try {
             const user = await UserService.updateUser(req.params.id, req.body);
-            res.json(UserController.sanitizeUser(user));
+            res.json(await UserController.withAvatar(user));
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -57,7 +70,24 @@ class UserController {
     static async updateMe(req, res) {
         try {
             const user = await UserService.updateUser(req.user.id, req.body);
-            res.json(UserController.sanitizeUser(user));
+            res.json(await UserController.withAvatar(user));
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    static async updateAvatar(req, res) {
+        try {
+            const avatarUrl = req.file
+                ? `${req.protocol}://${req.get("host")}/uploads/avatars/${req.file.filename}`
+                : null;
+            const avatarEmoji = (req.body.avatarEmoji || req.body.user_avatar_emoji || '').trim() || null;
+            await UserProfileService.setAvatar(req.user.id, {
+                avatarUrl,
+                avatarEmoji,
+            });
+            const user = await UserService.getUserById(req.user.id);
+            res.json(await UserController.withAvatar(user));
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -66,7 +96,7 @@ class UserController {
     static async delete(req, res) {
         try {
             const user = await UserService.deleteUser(req.params.id);
-            res.json(user);
+            res.json(UserController.sanitizeUser(user));
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

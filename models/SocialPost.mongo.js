@@ -17,6 +17,18 @@ const socialPostSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    authorRole: {
+      type: String,
+      default: null,
+    },
+    authorAvatarUrl: {
+      type: String,
+      default: null,
+    },
+    authorAvatarEmoji: {
+      type: String,
+      default: null,
+    },
     content: {
       type: String,
       default: '',
@@ -31,6 +43,27 @@ const socialPostSchema = new mongoose.Schema(
       type: String,
       enum: ['image', 'video', null],
       default: null,
+    },
+    likes: {
+      type: [Number],
+      default: [],
+    },
+    comments: {
+      type: [
+        new mongoose.Schema(
+          {
+            authorUserId: { type: Number, required: true },
+            authorName: { type: String, required: true },
+            authorHandle: { type: String, required: true },
+            authorRole: { type: String, default: null },
+            authorAvatarUrl: { type: String, default: null },
+            authorAvatarEmoji: { type: String, default: null },
+            content: { type: String, required: true, trim: true, maxlength: 1000 },
+          },
+          { _id: true, timestamps: true }
+        ),
+      ],
+      default: [],
     },
   },
   {

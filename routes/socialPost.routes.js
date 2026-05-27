@@ -25,7 +25,12 @@ const upload = multer({
   limits: { fileSize: 30 * 1024 * 1024 },
 });
 
-router.get('/', SocialPostController.list);
+router.get('/', authenticate, SocialPostController.list);
+router.get('/me', authenticate, SocialPostController.listMine);
 router.post('/', authenticate, upload.single('media'), SocialPostController.create);
+router.put('/:id', authenticate, upload.single('media'), SocialPostController.update);
+router.delete('/:id', authenticate, SocialPostController.remove);
+router.post('/:id/like', authenticate, SocialPostController.toggleLike);
+router.post('/:id/comments', authenticate, SocialPostController.addComment);
 
 module.exports = router;
