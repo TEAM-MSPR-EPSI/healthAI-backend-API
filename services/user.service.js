@@ -51,7 +51,22 @@ class UserService {
             if (!user) {
                 throw new Error("User not found");
             }
-            await user.destroy();
+            // Anonymisation RGPD — valeurs neutres respectant les contraintes NOT NULL
+            await user.update({
+                user_firstname:   "Utilisateur",
+                user_lastname:    "Supprimé",
+                user_email:       `deleted_${id}@deleted.invalid`,
+                user_phone:       "0000000000",
+                user_birth:       "1970-01-01",
+                user_gender:      "prefer_not_to_say",
+                user_size:        0,
+                user_weight:      0,
+                user_last_weight: 0,
+                user_city:        null,
+                user_country:     null,
+                user_hashpwd:     "DELETED",
+                sport_program_id: null,
+            });
             return user;
         } catch (error) {
             console.error(error);
