@@ -12,7 +12,9 @@ class AuthService {
     const hashed = await bcrypt.hash(data.password, 10);
     return await User.create({
       ...data,
-      user_hashpwd: hashed
+      user_hashpwd: hashed,
+      user_role: data.user_role ?? 'user',   
+      user_inscription: new Date().toISOString().split('T')[0],
     });
   }
 

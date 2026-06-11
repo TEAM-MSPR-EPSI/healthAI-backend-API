@@ -35,6 +35,20 @@ const SessionProgress = sequelize.define("SessionProgress", {
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
+    sport_program_id: {                    // ← ajout
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "sport_program",
+        key: "sport_program_id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+    },
+    program_session_rank: {               // ← ajout
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName: "session_progress",
@@ -51,6 +65,11 @@ SessionProgress.associate = (models) => {
   SessionProgress.belongsTo(models.User, {
     foreignKey: "user_id",
     as: "user",
+  });
+
+  SessionProgress.belongsTo(models.SportProgram, {  // ← ajout
+    foreignKey: "sport_program_id",
+    as: "sport_program",
   });
 };
 

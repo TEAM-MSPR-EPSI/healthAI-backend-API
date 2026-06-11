@@ -32,6 +32,7 @@ const exerciseEquipmentRoutes = require('./routes/exerciseEquipment.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const importRoutes = require('./routes/import.routes');
 const socialPostRoutes = require('./routes/socialPost.routes');
+const userSubscriptionRoutes = require('./routes/userSubscription.routes');
 
 const app = express();
 app.use(express.json());
@@ -64,6 +65,12 @@ app.use('/api/exercise-equipment', exerciseEquipmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/import', importRoutes);
 app.use('/api/social-posts', socialPostRoutes);
+app.use('/api/user-subscriptions', userSubscriptionRoutes);
+
+sequelize.sync()
+  .then(() => console.log("Database synced"))
+  .catch(err => console.error(err));
+
 
 app.get('/', (req, res) => {
   res.send('API OK');
