@@ -3,6 +3,8 @@ const sequelize = require('./config/database');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const models = require('./models/index');
+const cookieParser = require('cookie-parser');
+
 
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
@@ -26,9 +28,12 @@ const recipeIngredientRoutes = require('./routes/recipeIngredient.routes');
 const exerciseEquipmentRoutes = require('./routes/exerciseEquipment.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const importRoutes = require('./routes/import.routes');
+const userSubscriptionRoutes = require('./routes/userSubscription.routes');
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -54,6 +59,7 @@ app.use('/api/recipe-ingredients', recipeIngredientRoutes);
 app.use('/api/exercise-equipment', exerciseEquipmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/import', importRoutes);
+app.use('/api/user-subscriptions', userSubscriptionRoutes);
 
 sequelize.sync()
   .then(() => console.log("Database synced"))

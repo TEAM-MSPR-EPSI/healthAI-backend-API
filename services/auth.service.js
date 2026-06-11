@@ -12,7 +12,9 @@ class AuthService {
     const hashed = await bcrypt.hash(data.password, 10);
     return await User.create({
       ...data,
-      user_hashpwd: hashed
+      user_hashpwd: hashed,
+      user_role: data.user_role ?? 'user',   
+      user_inscription: new Date().toISOString().split('T')[0],
     });
   }
 
@@ -25,7 +27,7 @@ class AuthService {
     if (!valid) throw new Error("Invalid password");
 
     const token = jwt.sign(
-      { id: user.user_id },
+      { id: user.user_id, role: user.user_role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
