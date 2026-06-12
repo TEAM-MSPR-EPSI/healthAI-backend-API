@@ -80,8 +80,12 @@ class SocialPostService {
       throw new Error('Le fichier doit etre une image ou une video.');
     }
 
+    let baseMediaUrl = process.env.PUBLIC_MEDIA_URL;
+    if (!baseMediaUrl || baseMediaUrl === 'http://localhost') {
+        baseMediaUrl = baseUrl ? baseUrl.replace(/:\d+$/, '') : 'http://localhost';
+    }
     const mediaUrl = file
-      ? `${baseUrl || process.env.PUBLIC_API_BASE_URL || 'http://localhost:5000'}/uploads/social/${path.basename(file.path)}`
+      ? `${baseMediaUrl}/${file.bucket || 'photos'}/${file.key}`
       : null;
 
     const author = await buildUserSnapshot(user);
@@ -128,7 +132,11 @@ class SocialPostService {
         throw new Error('Le fichier doit etre une image ou une video.');
       }
       deleteFileIfExists(post.mediaUrl);
-      post.mediaUrl = `${baseUrl || process.env.PUBLIC_API_BASE_URL || 'http://localhost:5000'}/uploads/social/${path.basename(file.path)}`;
+      let baseMediaUrl = process.env.PUBLIC_MEDIA_URL;
+      if (!baseMediaUrl || baseMediaUrl === 'http://localhost') {
+          baseMediaUrl = baseUrl ? baseUrl.replace(/:\d+$/, '') : 'http://localhost';
+      }
+      post.mediaUrl = `${baseMediaUrl}/${file.bucket || 'photos'}/${file.key}`;
       post.mediaType = mediaType;
     }
 

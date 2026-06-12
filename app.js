@@ -67,9 +67,6 @@ app.use('/api/import', importRoutes);
 app.use('/api/social-posts', socialPostRoutes);
 app.use('/api/user-subscriptions', userSubscriptionRoutes);
 
-sequelize.sync()
-  .then(() => console.log("Database synced"))
-  .catch(err => console.error(err));
 
 
 app.get('/', (req, res) => {

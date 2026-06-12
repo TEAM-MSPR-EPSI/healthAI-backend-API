@@ -7,21 +7,32 @@ const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
-const uploadDir = path.join(__dirname, '..', 'uploads', 'social');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+const multerS3 = require('multer-s3');
+const { S3Client } = require('@aws-sdk/client-s3');
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
+const s3 = new S3Client({
+  endpoint: process.env.S3_ENDPOINT || 'http://minio:9000',
+  region: 'us-east-1',
+  forcePathStyle: true,
+  credentials: {
+    accessKeyId: process.env.APP_ACCESS_KEY || 'app-access-key',
+    secretAccessKey: process.env.APP_SECRET_KEY || 'app-secret-key',
   },
 });
 
 const upload = multer({
-  storage,
+  storage: multerS3({
+    s3: s3,
+    bucket: 'photos',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    metadata: function (req, file, cb) {
+      cb(null, {fieldName: file.fieldname});
+    },
+    key: function (req, file, cb) {
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+      cb(null, `users/${req.user ? req.user.id : 'unknown'}/${uniqueSuffix}${path.extname(file.originalname)}`);
+    }
+  }),
   limits: { fileSize: 30 * 1024 * 1024 },
 });
 

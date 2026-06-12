@@ -78,8 +78,13 @@ class UserController {
 
     static async updateAvatar(req, res) {
         try {
+            let baseMediaUrl = process.env.PUBLIC_MEDIA_URL;
+            if (!baseMediaUrl || baseMediaUrl === 'http://localhost') {
+                const hostWithoutPort = req.get("host") ? req.get("host").split(':')[0] : 'localhost';
+                baseMediaUrl = `${req.protocol}://${hostWithoutPort}`;
+            }
             const avatarUrl = req.file
-                ? `${req.protocol}://${req.get("host")}/uploads/avatars/${req.file.filename}`
+                ? `${baseMediaUrl}/avatars/${req.file.key}`
                 : null;
             const avatarEmoji = (req.body.avatarEmoji || req.body.user_avatar_emoji || '').trim() || null;
             await UserProfileService.setAvatar(req.user.id, {
