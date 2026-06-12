@@ -1,5 +1,8 @@
+require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const sequelize = require('./config/database');
+const connectMongo = require('./config/mongo');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const models = require('./models/index');
@@ -28,11 +31,13 @@ const recipeIngredientRoutes = require('./routes/recipeIngredient.routes');
 const exerciseEquipmentRoutes = require('./routes/exerciseEquipment.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const importRoutes = require('./routes/import.routes');
+const socialPostRoutes = require('./routes/socialPost.routes');
 const userSubscriptionRoutes = require('./routes/userSubscription.routes');
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -59,16 +64,26 @@ app.use('/api/recipe-ingredients', recipeIngredientRoutes);
 app.use('/api/exercise-equipment', exerciseEquipmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/import', importRoutes);
+app.use('/api/social-posts', socialPostRoutes);
 app.use('/api/user-subscriptions', userSubscriptionRoutes);
 
-sequelize.sync()
-  .then(() => console.log("Database synced"))
-  .catch(err => console.error(err));
+
 
 app.get('/', (req, res) => {
   res.send('API OK');
 });
 
-app.listen(5000, '0.0.0.0', () => {
-  console.log('API backend running on port 5000');
-});
+const bootstrap = async () => {
+  try {
+    await sequelize.sync();
+    console.log('Database synced');
+    await connectMongo();
+    app.listen(5000, '0.0.0.0', () => {
+      console.log('API backend running on port 5000');
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+bootstrap();
